@@ -8,15 +8,15 @@ This server empowers developers and IT administrators to integrate natural langu
 
 ## How it works
 
-When an AI client starts, it automatically discovers the Microsoft Graph MCP Server endpoint at mcp.svc.cloud.microsoft/enterprise and retrieves the available tools.
+When an AI client starts, it automatically discovers the Microsoft MCP Server for Enterprise endpoint at `mcp.svc.cloud.microsoft/enterprise` and retrieves the available tools.
 
 **Example workflow:**
 
-1. **NLP Processing:** The LLM interprets the user's query (e.g., "How many users do we have in our Microsoft Entra tenant?") and determines the intent.
+1. **NLP Processing:** The LLM interprets the user's query (for example, "How many users do we have in our Microsoft Entra tenant?") and determines the intent.
 
-1. **Semantic Search:** The search_for_graph_examples tool finds relevant Graph API queries matching the intent.
+1. **Semantic Search:** The search_for_graph_examples tool finds relevant API queries that match the intent.
 
-1. **Query Selection:** The LLM selects the best-fit API call (e.g., GET /users/\$count).
+1. **Query Selection:** The LLM selects the best-fit API call (for example, GET /users/\$count).
 
 1. **Execution:** The LLM uses the make_graph_call_readonly tool to execute the API call, respecting user privileges.
 
@@ -30,7 +30,7 @@ The Microsoft MCP Server for Enterprise provides the following tools for AI agen
 
 - **search_for_graph_examples:** Uses retrieval-augmented generation (RAG) to find Microsoft Graph API calls that match user intent.
 
-- **make_graph_call_readonly:** Executes read-only Microsoft Graph API calls, respecting permissions and throttling.
+- **make_graph_call_readonly:** Runs read-only Microsoft Graph API calls, respecting permissions and throttling.
 
 - **get_graph_entity_properties:** Retrieves properties of specific Microsoft Graph entities to help the AI model understand data structures.
 
@@ -78,10 +78,6 @@ MicrosoftGraphActivityLogs
 | where AppId == "e8c77dc2-69b3-43f4-bc51-3213c9d915b4"
 | project RequestId, TimeGenerated, UserId, RequestMethod, RequestUri, ResponseStatusCode
 ```
-
-## Next steps
-
-- [Provision MCP](/mcp-server/provision-mcp.md)
 
 ## Support and reference
 
