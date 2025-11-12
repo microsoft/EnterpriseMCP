@@ -60,7 +60,7 @@ The Microsoft MCP Server for Enterprise provides the following tools for AI agen
 
 ## Cloud availability
 
-- Available only in the public cloud (global service).
+The Microsoft MCP Server for Enterprise is available only in the public cloud (global service).
 
 ## Logs
 
