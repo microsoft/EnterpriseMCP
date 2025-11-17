@@ -3,11 +3,18 @@
 ## Overview
 
 Built on the open [Model Context Protocol](https://modelcontextprotocol.io), the public preview of **Microsoft MCP Server for Enterprise** lets AI agents access **Microsoft Entra** data by converting natural language queries into Microsoft Graph API calls.
-This MCP server empowers developers and IT administrators to integrate the management of organizational data into AI-powered workflows.
+This MCP server empowers developers and IT Administrators to integrate the management of organizational data into AI-powered workflows.
 
 ## Quick Start
 
 To get started with the Microsoft MCP Server for Enterprise, follow these steps:
+
+1. Ensure Microsoft Graph PowerShell SDK Modules do not conflict with Microsoft.Entra.Beta module. If you have Microsoft.Graph modules installed, consider uninstalling them first:
+
+   ```powershell
+   Install-Module Uninstall-Graph
+   Uninstall-Graph -All
+   ```
 
 1. Install Microsoft.Entra.Beta PowerShell module (version 1.0.13 or later):
 
@@ -27,6 +34,8 @@ To get started with the Microsoft MCP Server for Enterprise, follow these steps:
    Grant-EntraBetaMCPServerPermission -ApplicationName VisualStudioCode
    ```
 
+1. If you have any issue on any of the above steps, please refer to the detailed [installation instructions](https://learn.microsoft.com/powershell/entra-powershell/installation?view=entra-powershell-beta).
+
 1. Click [Install Microsoft MCP Server for Enterprise](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) to launch VS Code's MCP install page.
 
 1. Click the Install button in VS Code and Login with your Admin account from the tenant above
@@ -44,7 +53,7 @@ It exposes only three tools to implement a reliable and grounded workflow:
 
 ## Current scope and capabilities
 
-For **Public Preview**, our focus is to support Read-only enterprise IT scenarios focused on Microsoft Entra identity and directory operations (user, group, application, device management, and administrative actions).
+For **Public Preview**, our focus is to support **read-only** enterprise IT scenarios focused on Microsoft Entra identity and directory operations (user, group, application, device management, and administrative actions).
 
 In particular, the MCP Server can handle queries related to:
 
@@ -56,6 +65,18 @@ In particular, the MCP Server can handle queries related to:
 1. **Provenance and investigation**: End‑to‑end telemetry (sign‑in, audit, provisioning, network), health alerts, and SLA/availability.
 1. **Optimize spending & hygiene**: License counts/usage, unused or stale apps/groups, domain configuration and contacts.
 
+## Supported Clients
+
+The Microsoft MCP Server for Enterprise is designed to work with any MCP-compatible client *supporting the latest standard*.
+
+> ⚠️ Notes:
+>
+> - Dynamic Client Registration (DCR) is not supported, but we are working to support OAuth Client ID Metadata Documents (CIMD) in a future release.
+> - ChatGPT is supported only with custom client Id, that is currently available only on the **Pro Plan**.
+> - Claude has a bug that prevents authentication with Entra resources, the team is aware and currently working on a fix. It also requires a custom client Id, available only on the **Teams Plan**.
+
+We recommend using it with [Visual Studio Code](https://code.visualstudio.com/) and the [Copilot Chat extension](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat).
+
 ## Authorization and permissions
 
 The MCP Server for Enterprise uses Microsoft Graph API to access data in your Microsoft Entra tenant using **delegated permissions** only, and provides a reduced set of permissions exposed by Microsoft Graph.  
@@ -65,21 +86,21 @@ Use the following cmdlet to list the permissions provided by the MCP Server for 
 (Get-MgServicePrincipal -Property "Oauth2PermissionScopes" -Filter "AppId eq 'e8c77dc2-69b3-43f4-bc51-3213c9d915b4'").Oauth2PermissionScopes.value | Sort-Object
 ```
 
-Use the following cmdlets to to manage scopes on your own applications:
+If you'd like to use your own Registered Application, use the following cmdlets to to manage scopes granted to your MCP Client Application:
 
 ```powershell
-Grant-EntraBetaMCPServerPermission -ApplicationId "<Your_MCP_Client_Application_Id>" -Scopes "<Scope1>", "<Scope2>", "<...>"
-Revoke-EntraBetaMCPServerPermission -ApplicationId "<Your_MCP_Client_Application_Id>" -Scopes "<Scope1>", "<Scope2>", "<...>"
+Grant-EntraBetaMCPServerPermission -ApplicationId "<MCP_Client_Application_Id>" -Scopes "<Scope1>", "<Scope2>", "<...>"
+Revoke-EntraBetaMCPServerPermission -ApplicationId "<MCP_Client_Application_Id>" -Scopes "<Scope1>", "<Scope2>", "<...>"
 ```
 
 ## Advantages
 
-1. **No extra license required**: only existing Microsoft Entra and Microsoft Graph API licenses applies.
 1. **Remote MCP Server**: Easy to configure, fully compliant, and highly reliable—deployed in the same regions as Microsoft Graph for optimal performance, following the same [Microsoft Graph Throttling limits](https://learn.microsoft.com/graph/throttling-limits#identity-and-access-service-limits).
 1. **End-to-end authentication security**: Your MCP client needs specific MCP.* scopes (mirroring Graph Scopes) to be granted, preventing man-in-the-middle attacks. We're adding PFT+POP security enhancements soon.
 1. **Simplified architecture**: Works with just 3 tools instead of managing individual tools for every API operation.
 1. **High-quality query generation**: Generates accurate queries using over 500 real-world examples through RAG (Retrieval-Augmented Generation).
 1. **Full auditability**: Easily audit all MCP operations since they execute under the same App ID with a specific user agent.
+1. **No extra license required**: only existing Microsoft Entra and Microsoft Graph API licenses applies.
 
 ## Availability, Roadmap and feedback
 
