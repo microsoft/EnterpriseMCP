@@ -96,7 +96,7 @@ Revoke-EntraBetaMCPServerPermission -ApplicationId "<MCP_Client_Application_Id>"
 ## Advantages
 
 1. **Remote MCP Server**: Easy to configure, fully compliant, and highly reliable—deployed in the same regions as Microsoft Graph for optimal performance, following the same [Microsoft Graph Throttling limits](https://learn.microsoft.com/graph/throttling-limits#identity-and-access-service-limits).
-1. **End-to-end authentication security**: Your MCP client needs specific MCP.* scopes (mirroring Graph Scopes) to be granted, preventing man-in-the-middle attacks. We're adding PFT+POP security enhancements soon.
+1. **IT Admins are in control**: MCP clients need specific MCP.* scopes (mirroring Microsoft Graph Scopes) to be granted to access your tenant data.
 1. **Simplified architecture**: Works with just 3 tools instead of managing individual tools for every API operation.
 1. **High-quality query generation**: Generates accurate queries using over 500 real-world examples through RAG (Retrieval-Augmented Generation).
 1. **Full auditability**: Easily audit all MCP operations since they execute under the same App ID with a specific user agent.
