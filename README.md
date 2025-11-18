@@ -83,7 +83,7 @@ The MCP Server for Enterprise uses Microsoft Graph API to access data in your Mi
 Use the following cmdlet to list the permissions provided by the MCP Server for Enterprise:
 
 ```powershell
-(Get-MgServicePrincipal -Property "Oauth2PermissionScopes" -Filter "AppId eq 'e8c77dc2-69b3-43f4-bc51-3213c9d915b4'").Oauth2PermissionScopes.value | Sort-Object
+(Get-EntraBetaServicePrincipal -Property "PublishedPermissionScopes" -Filter "AppId eq 'e8c77dc2-69b3-43f4-bc51-3213c9d915b4'").PublishedPermissionScopes | Select-Object Value, AdminConsentDisplayName | Sort-Object
 ```
 
 If you'd like to use your own Registered Application, use the following cmdlets to to manage scopes granted to your MCP Client Application:
