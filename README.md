@@ -83,7 +83,7 @@ The MCP Server for Enterprise uses Microsoft Graph API to access data in your Mi
 Use the following cmdlet to list the permissions provided by the MCP Server for Enterprise:
 
 ```powershell
-(Get-MgServicePrincipal -Property "Oauth2PermissionScopes" -Filter "AppId eq 'e8c77dc2-69b3-43f4-bc51-3213c9d915b4'").Oauth2PermissionScopes.value | Sort-Object
+(Get-EntraBetaServicePrincipal -Property "PublishedPermissionScopes" -Filter "AppId eq 'e8c77dc2-69b3-43f4-bc51-3213c9d915b4'").PublishedPermissionScopes | Select-Object Value, AdminConsentDisplayName | Sort-Object
 ```
 
 If you'd like to use your own Registered Application, use the following cmdlets to to manage scopes granted to your MCP Client Application:
@@ -96,7 +96,7 @@ Revoke-EntraBetaMCPServerPermission -ApplicationId "<MCP_Client_Application_Id>"
 ## Advantages
 
 1. **Remote MCP Server**: Easy to configure, fully compliant, and highly reliable—deployed in the same regions as Microsoft Graph for optimal performance, following the same [Microsoft Graph Throttling limits](https://learn.microsoft.com/graph/throttling-limits#identity-and-access-service-limits).
-1. **End-to-end authentication security**: Your MCP client needs specific MCP.* scopes (mirroring Graph Scopes) to be granted, preventing man-in-the-middle attacks. We're adding PFT+POP security enhancements soon.
+1. **IT Admins are in control**: MCP clients need specific MCP.* scopes (mirroring Microsoft Graph Scopes) to be granted to access your tenant data.
 1. **Simplified architecture**: Works with just 3 tools instead of managing individual tools for every API operation.
 1. **High-quality query generation**: Generates accurate queries using over 500 real-world examples through RAG (Retrieval-Augmented Generation).
 1. **Full auditability**: Easily audit all MCP operations since they execute under the same App ID with a specific user agent.
@@ -112,7 +112,7 @@ Please share suggestions or issues through our feedback form: [Submit feedback](
 ## Licensing and costs
 
 - The MCP Server for Enterprise **doesn't require extra cost or separate license**.
-- You need the right licenses for the data you access (for example, Microsoft Entra ID P2 for sign-in logs).
+- You need the right licenses for the data you access (for example, Microsoft Entra ID Governance or Microsoft Entra ID P2 license for Privileged Identity Management (PIM) data).
 - Follows Microsoft Graph API throttling limits.
 
 ## Logs
