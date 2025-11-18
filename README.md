@@ -112,7 +112,7 @@ Please share suggestions or issues through our feedback form: [Submit feedback](
 ## Licensing and costs
 
 - The MCP Server for Enterprise **doesn't require extra cost or separate license**.
-- You need the right licenses for the data you access (for example, Microsoft Entra ID P2 for sign-in logs).
+- You need the right licenses for the data you access (for example, Microsoft Entra ID Governance or Microsoft Entra ID P2 license for Privileged Identity Management (PIM) data).
 - Follows Microsoft Graph API throttling limits.
 
 ## Logs
