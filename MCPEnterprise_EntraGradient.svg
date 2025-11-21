@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ns0:svg xmlns:ns0="http://www.w3.org/2000/svg" overflow="hidden" space="preserve" version="1.1" viewBox="0 0 830 923" width="48" height="53.38">
+<ns0:defs>
+<ns0:linearGradient id="9680722b-31a9-431a-9908-f00a14c295a9" x1="3529.6" x2="4178" y1="320.75" y2="320.75" gradientUnits="userSpaceOnUse" spreadMethod="reflect">
+<ns0:stop stop-color="#95EEFD" offset="0" />
+<ns0:stop stop-color="#50DFFB" offset=".2" />
+<ns0:stop stop-color="#2EB1EB" offset=".4" />
+<ns0:stop stop-color="#0783CE" offset=".6" />
+<ns0:stop stop-color="#1252A4" offset=".8" />
+<ns0:stop stop-color="#1D4D8C" offset="1" />
+</ns0:linearGradient>
+<ns0:linearGradient id="a02f93c5-4719-4ff0-b8af-a94c6af928f2" x1="3800.6" x2="4359" y1="591.75" y2="591.75" gradientUnits="userSpaceOnUse" spreadMethod="reflect">
+<ns0:stop stop-color="#95EEFD" offset="0" />
+<ns0:stop stop-color="#50DFFB" offset=".2" />
+<ns0:stop stop-color="#2EB1EB" offset=".4" />
+<ns0:stop stop-color="#0783CE" offset=".6" />
+<ns0:stop stop-color="#1252A4" offset=".8" />
+<ns0:stop stop-color="#1D4D8C" offset="1" />
+</ns0:linearGradient>
+<ns0:linearGradient id="defda86c-a24d-4513-9070-fb3ee2dccfa3" x1="3675.6" x2="4231" y1="445.25" y2="445.25" gradientUnits="userSpaceOnUse" spreadMethod="reflect">
+<ns0:stop stop-color="#95EEFD" offset="0" />
+<ns0:stop stop-color="#50DFFB" offset=".2" />
+<ns0:stop stop-color="#2EB1EB" offset=".4" />
+<ns0:stop stop-color="#0783CE" offset=".6" />
+<ns0:stop stop-color="#1252A4" offset=".8" />
+<ns0:stop stop-color="#1D4D8C" offset="1" />
+</ns0:linearGradient>
+</ns0:defs>
+<ns0:g transform="translate(-3529 -40)" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="73.333">
+<ns0:path d="m3566.3 472.78 358.57-358.42c49.51-49.487 129.79-49.487 179.29 0 49.52 49.487 49.52 129.72 0 179.21l-270.79 270.68" stroke="url(#9680722b-31a9-431a-9908-f00a14c295a9)" fill="none" />
+<ns0:path d="m3833.3 564.29 270.99-270.86c49.48-49.515 129.6-48.564 179.06 0.95115l1.87 1.865c49.48 49.516 49.48 129.8 0 179.31l-324.06 324.32c-16.49 16.516-16.49 43.26 0 59.775l66.54 66.595" stroke="url(#a02f93c5-4719-4ff0-b8af-a94c6af928f2)" fill="none" />
+<ns0:path d="m4014.9 204.25-265.4 265.4c-49.55 49.55-49.55 129.88 0 179.43 49.55 49.549 129.88 49.549 179.43 0l265.41-265.4" stroke="url(#defda86c-a24d-4513-9070-fb3ee2dccfa3)" fill="none" />
+</ns0:g>
+</ns0:svg>
