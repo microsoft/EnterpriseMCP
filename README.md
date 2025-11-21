@@ -1,5 +1,8 @@
 # Microsoft MCP Server for Enterprise
 
+| ![Microsoft MCP Server for Enterprise Logo](MCPEnterprise_EntraGradient.svg) |
+| :--------------------------------------------------------: |
+
 ## Overview
 
 Built on the open [Model Context Protocol](https://modelcontextprotocol.io), the public preview of **Microsoft MCP Server for Enterprise** lets AI agents access **Microsoft Entra** data by converting natural language queries into Microsoft Graph API calls.
@@ -95,25 +98,25 @@ Revoke-EntraBetaMCPServerPermission -ApplicationId "<MCP_Client_Application_Id>"
 
 ## Advantages
 
-1. **Remote MCP Server**: Easy to configure, fully compliant, and highly reliable—deployed in the same regions as Microsoft Graph for optimal performance, following the same [Microsoft Graph Throttling limits](https://learn.microsoft.com/graph/throttling-limits#identity-and-access-service-limits).
-1. **IT Admins are in control**: MCP clients need specific MCP.* scopes (mirroring Microsoft Graph Scopes) to be granted to access your tenant data.
-1. **Simplified architecture**: Works with just 3 tools instead of managing individual tools for every API operation.
-1. **High-quality query generation**: Generates accurate queries using over 500 real-world examples through RAG (Retrieval-Augmented Generation).
-1. **Full auditability**: Easily audit all MCP operations since they execute under the same App ID with a specific user agent.
-1. **No extra license required**: only existing Microsoft Entra and Microsoft Graph API licenses applies.
+1. **Remote MCP Server**: Easy to configure, fully compliant, and highly reliable—deployed in the same regions as Microsoft Graph for optimal performance.
+2. **IT Admins are in control**: MCP clients need specific MCP.* scopes (mirroring Microsoft Graph Scopes) to be granted to access your tenant data.
+3. **Simplified architecture**: Works with just 3 tools instead of managing individual tools for every API operation.
+4. **High-quality query generation**: Generates accurate queries using over 500 real-world examples through RAG (Retrieval-Augmented Generation).
+5. **Full auditability**: Easily audit all MCP operations since they execute under the same App ID with a specific user agent.
+6. **No extra license required**: only existing Microsoft Entra and Microsoft Graph API licenses applies.
 
 ## Availability, Roadmap and feedback
 
 The Microsoft MCP Server for Enterprise is available only in the public cloud (global service), with support for sovereign clouds planned for a future release.  
 We will continue expanding beyond the current Microsoft Entra scenarios, but M365 APIs [will be covered by **Agent 365**](https://learn.microsoft.com/microsoft-agent-365/mcp-servers-overview).  
 Support for write operations is planned for a future release.  
-Please share suggestions or issues through our feedback form: [Submit feedback](https://forms.office.com/r/Vs1au5MjgH).
+Please share suggestions or issues through our feedback form: [Submit feedback](https://aka.ms/MCPServerForEnterpriseSurvey).
 
-## Licensing and costs
+## Licensing and usage
 
 - The MCP Server for Enterprise **doesn't require extra cost or separate license**.
 - You need the right licenses for the data you access (for example, Microsoft Entra ID Governance or Microsoft Entra ID P2 license for Privileged Identity Management (PIM) data).
-- Follows Microsoft Graph API throttling limits.
+- Any request to this MCP server is limited to **100 requests per minute per user**. Requests to `microsoft_graph_get` are also subject to [Microsoft Graph Throttling limits](https://learn.microsoft.com/graph/throttling-limits#identity-and-access-service-limits).
 
 ## Logs
 
