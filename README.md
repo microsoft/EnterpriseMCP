@@ -19,13 +19,13 @@ To get started with the Microsoft MCP Server for Enterprise, follow these steps 
    Install-Module Microsoft.Entra.Beta -Force -AllowClobber
    ```
 
-2. Connect Microsoft Entra ID to the tenant you'd like to register the MCP Server:
+1. Connect Microsoft Entra ID to the tenant you'd like to register the MCP Server:
 
    ```powershell
    Connect-Entra -Scopes 'Application.ReadWrite.All', 'DelegatedPermissionGrant.ReadWrite.All'
    ```
 
-3. Register the MCP Server for Enterprise in your tenant and grant all permissions to Visual Studio Code:
+1. Register the MCP Server for Enterprise in your tenant and grant all permissions to Visual Studio Code:
 
    ```powershell
    Grant-EntraBetaMCPServerPermission -ApplicationName VisualStudioCode
@@ -41,7 +41,7 @@ Uninstall-Graph -All
 ## Visual Studio Code Configuration
 
 1. Click [Install Microsoft MCP Server for Enterprise](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) to launch VS Code's MCP install page.
-2. Click the Install button in VS Code and Login with your Admin account from the tenant above
+2. Click the Install button in VS Code and Login with your account from the tenant above.
 3. Open Copilot Chat and ask a question about your tenant.
 
 ## Azure Foundry Configuration
