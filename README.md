@@ -41,22 +41,22 @@ Uninstall-Graph -All
 ## Visual Studio Code Configuration
 
 1. Click [Install Microsoft MCP Server for Enterprise](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) to launch VS Code's MCP install page.
-2. Click the Install button in VS Code and Login with your account from the tenant above.
-3. Open Copilot Chat and ask a question about your tenant.
+1. Click the Install button in VS Code and Login with your account from the tenant above.
+1. Open Copilot Chat and ask a question about your tenant.
 
 ## Azure Foundry Configuration
 
 1. Navigate to [Azure Foundry Portal](https://ai.azure.com/nextgen).
 1. Go to Agents on the left and click **Create agent** button on the top right.
-2. Assign a name, and expand Tools section
-3. Click **Add** and then Add a new tool
-5. Go to the Catalog and search for "Microsoft MCP Server for Enterprise"
-6. Select "Microsoft MCP Server for Enterprise" and click **Create**
-7. Add the Client ID of your MCP Client (you might need to register a new MCP Client application in your tenant, and assign the required MCP.* scopes)
-8. Click Connect
-9. Update the Redirect URI of your MCP Client application to include the Azure Foundry redirect URI (shown in the portal after clicking Connect)
-10. Ask a question about your tenant data in the Azure Foundry chat interface.
-11. Click Open Consent button and login with your Admin account from the tenant above.
+1. Assign a name, and expand Tools section
+1. Click **Add** and then Add a new tool
+1. Go to the Catalog and search for "Microsoft MCP Server for Enterprise"
+1. Select "Microsoft MCP Server for Enterprise" and click **Create**
+1. Add the Client ID of your MCP Client (you might need to register a new MCP Client application in your tenant, and assign the required MCP.* scopes)
+1. Click Connect
+1. Update the Redirect URI of your MCP Client application to include the Azure Foundry redirect URI (shown in the portal after clicking Connect)
+1. Ask a question about your tenant data in the Azure Foundry chat interface.
+1. Click Open Consent button and login with your Admin account from the tenant above.
 
 ## Tools
 
@@ -114,11 +114,11 @@ Learn more: [Manage MCP Server for Enterprise permissions](https://learn.microso
 ## Advantages
 
 1. **Remote MCP Server**: Easy to configure, fully compliant, and highly reliable—deployed in the same regions as Microsoft Graph for optimal performance.
-2. **IT Admins are in control**: MCP clients need specific MCP.* scopes (mirroring Microsoft Graph Scopes) to be granted to access your tenant data.
-3. **Simplified architecture**: Works with just 3 tools instead of managing individual tools for every API operation.
-4. **High-quality query generation**: Generates accurate queries using over 500 real-world examples through RAG (Retrieval-Augmented Generation).
-5. **Full auditability**: Easily audit all MCP operations since they execute under the same App ID with a specific user agent.
-6. **No extra license required**: only existing Microsoft Entra and Microsoft Graph API licenses applies.
+1. **IT Admins are in control**: MCP clients need specific MCP.* scopes (mirroring Microsoft Graph Scopes) to be granted to access your tenant data.
+1. **Simplified architecture**: Works with just 3 tools instead of managing individual tools for every API operation.
+1. **High-quality query generation**: Generates accurate queries using over 500 real-world examples through RAG (Retrieval-Augmented Generation).
+1. **Full auditability**: Easily audit all MCP operations since they execute under the same App ID with a specific user agent.
+1. **No extra license required**: only existing Microsoft Entra and Microsoft Graph API licenses applies.
 
 ## Availability, Roadmap and feedback
 
