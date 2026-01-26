@@ -88,10 +88,7 @@ The Microsoft MCP Server for Enterprise is designed to work with any MCP-compati
 > ⚠️ Notes:
 >
 > - Dynamic Client Registration (DCR) is not supported, but we are working to support OAuth Client ID Metadata Documents (CIMD) in a future release.
-> - ChatGPT is supported only with custom client Id, that is currently available only on the **Pro Plan**.
-> - Claude has a bug that prevents authentication with Entra resources, the team is aware and currently working on a fix. It also requires a custom client Id, available only on the **Teams Plan**.
-
-We recommend using it with [Visual Studio Code](https://code.visualstudio.com/) and the [Copilot Chat extension](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot-chat).
+> - ChatGPT and Claude, and GitHub Copilot CLI are supported only with **custom client Id**: you need to register your own MCP Client application in your tenant and assign the required MCP.* scopes and configure the redirect URIs accordingly.
 
 ## Authorization and permissions
 
@@ -123,7 +120,7 @@ Learn more: [Manage MCP Server for Enterprise permissions](https://learn.microso
 ## Availability, Roadmap and feedback
 
 The Microsoft MCP Server for Enterprise is available only in the public cloud (global service), with support for sovereign clouds planned for a future release.  
-We will continue expanding beyond the current Microsoft Entra scenarios, but M365 APIs [will be covered by **Agent 365**](https://learn.microsoft.com/microsoft-agent-365/mcp-servers-overview).  
+We will continue expanding beyond the current Microsoft Entra scenarios, but M365 APIs [will be covered by **Agent 365**](https://learn.microsoft.com/microsoft-agent-365/tooling-servers-overview).  
 Support for write operations is planned for a future release.  
 Please share suggestions or issues through our feedback form: [Submit feedback](https://aka.ms/MCPServerForEnterpriseSurvey).
 
