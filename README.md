@@ -58,6 +58,34 @@ Uninstall-Graph -All
 1. Ask a question about your tenant data in the Azure Foundry chat interface.
 1. Click Open Consent button and login with your Admin account from the tenant above.
 
+## GitHub Copilot CLI Configuration
+
+> ⚠️ Requires registering your own MCP Client application in your tenant with the required MCP.* scopes.
+
+1. Register an MCP Client application in your tenant and configure the required scopes (see [Authorization and permissions](#authorization-and-permissions)).
+1. Use the Copilot CLI to interactively add the MCP server:
+
+   ```bash
+   /mcp add
+   ```
+
+1. Or manually add to `~/.copilot/mcp-config.json`:
+
+   ```json
+   {
+     "mcpServers": {
+       "Microsoft MCP Server for Enterprise": {
+         "type": "http",
+         "url": "https://mcp.svc.cloud.microsoft/enterprise"
+       }
+     }
+   }
+   ```
+
+1. Login with your account from the provisioned tenant when prompted.
+
+For more information, see the [GitHub Copilot CLI documentation](https://docs.github.com/en/copilot/concepts/agents/about-copilot-cli).
+
 ## Tools
 
 This MCP Server is atypical: instead of exposing a separate tool per Microsoft Graph operation, it applies Retrieval-Augmented Generation (RAG) and few-shot prompting to generate complete Microsoft Graph queries.  
