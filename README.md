@@ -39,40 +39,6 @@ To get started with the Microsoft MCP Server for Enterprise, you need to:
 | Refresh URL                | `https://login.microsoftonline.com/organizations/oauth2/v2.0/token`     | Required in some agents config      |
 | Scopes                     | `api://e8c77dc2-69b3-43f4-bc51-3213c9d915b4/.default`                   | Required in some agents config      |
 
-## Visual Studio Code / GitHub Copilot CLI Configuration
-
-To associate the permissions between the MCP Server and Visual Studio Code or GitHub Copilot CLI, you need to execute the following steps:
-
-1. Install Microsoft.Entra.Beta PowerShell module (version 1.0.13 or later, *requires [PowerShell 7](https://learn.microsoft.com/powershell/scripting/install/install-powershell?view=powershell-7.6))*:
-   ```powershell
-   Install-Module Microsoft.Entra.Beta -Force -AllowClobber
-   ```
-
-1. Connect Microsoft Entra ID to your tenant:
-
-   ```powershell
-   Connect-Entra -Scopes 'Application.ReadWrite.All', 'DelegatedPermissionGrant.ReadWrite.All'
-   ```
-
-1. Grant all permissions to Visual Studio Code / GitHub Copilot CLI:
-
-   ```powershell
-   Grant-EntraBetaMCPServerPermission -ApplicationName VisualStudioCode
-   ```
-1. For VSCode, click [Install Microsoft MCP Server for Enterprise](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) to launch the MCP install page.
-1. Click the Install button in VS Code and Login with your account from the tenant above.
-1. For GitHub Copilot CLI, type `/mcp add` and follow the configuration:
-   ![GitHub Copilot CLI Configuration](assets/ghcp_mcp_config.png)
-
-[Learn more](https://learn.microsoft.com/powershell/module/microsoft.entra.beta.applications/grant-entrabetamcpserverpermission?view=entra-powershell-beta) about `Grant-EntraBetaMCPServerPermission`.
-
-If you have any issue on any of the above steps, please refer to the detailed [installation instructions](https://learn.microsoft.com/powershell/entra-powershell/installation?view=entra-powershell-beta).
-You can try to execute the following to ensure Microsoft Graph PowerShell SDK Modules do not conflict with **Microsoft.Entra.Beta**:
-```powershell
-Install-Module Uninstall-Graph
-Uninstall-Graph -All
-```
-
 ## Tools
 
 This MCP Server is atypical: instead of exposing a separate tool per Microsoft Graph operation, it applies Retrieval-Augmented Generation (RAG) and few-shot prompting to generate complete Microsoft Graph queries.  
@@ -107,7 +73,37 @@ The Microsoft MCP Server for Enterprise is designed to work with any MCP-compati
 
 ### Visual Studio Code / GitHub Copilot CLI
 
-Follow the canonical setup instructions in [Visual Studio Code / GitHub Copilot CLI Configuration](#visual-studio-code--github-copilot-cli-configuration).
+To associate the permissions between the MCP Server and Visual Studio Code or GitHub Copilot CLI, you need to execute the following steps:
+
+1. Install Microsoft.Entra.Beta PowerShell module (version 1.0.13 or later, *requires [PowerShell 7](https://learn.microsoft.com/powershell/scripting/install/install-powershell?view=powershell-7.6))*:
+   ```powershell
+   Install-Module Microsoft.Entra.Beta -Force -AllowClobber
+   ```
+
+1. Connect Microsoft Entra ID to your tenant:
+
+   ```powershell
+   Connect-Entra -Scopes 'Application.ReadWrite.All', 'DelegatedPermissionGrant.ReadWrite.All'
+   ```
+
+1. Grant all permissions to Visual Studio Code / GitHub Copilot CLI:
+
+   ```powershell
+   Grant-EntraBetaMCPServerPermission -ApplicationName VisualStudioCode
+   ```
+1. For VSCode, click [Install Microsoft MCP Server for Enterprise](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) to launch the MCP install page.
+1. Click the Install button in VS Code and Login with your account from the tenant above.
+1. For GitHub Copilot CLI, type `/mcp add` and follow the configuration:
+   ![GitHub Copilot CLI Configuration](assets/ghcp_mcp_config.png)
+
+[Learn more](https://learn.microsoft.com/powershell/module/microsoft.entra.beta.applications/grant-entrabetamcpserverpermission?view=entra-powershell-beta) about `Grant-EntraBetaMCPServerPermission`.
+
+If you have any issue on any of the above steps, please refer to the detailed [installation instructions](https://learn.microsoft.com/powershell/entra-powershell/installation?view=entra-powershell-beta).
+You can try to execute the following to ensure Microsoft Graph PowerShell SDK Modules do not conflict with **Microsoft.Entra.Beta**:
+```powershell
+Install-Module Uninstall-Graph
+Uninstall-Graph -All
+```
 
 ### Microsoft Agent Platforms
 
