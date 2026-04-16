@@ -17,7 +17,7 @@ To set up the MCP Server for your tenant:
    `POST https://graph.microsoft.com/v1.0/servicePrincipals`  
    `Body: { "appId": "e8c77dc2-69b3-43f4-bc51-3213c9d915b4" }`
 
-2. **[Register a new app](https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/CreateApplicationBlade/quickStartType~/null/isMSAApp~/false)**, representing the MCP Client.
+2. **[Register a new app](https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/CreateApplicationBlade/quickStartType~/null/isMSAApp~/false)**, representing the MCP Client.  
    Set the appropriate Redirect URI (also called Reply URL) depending on the client. For example:  
    **Claude Desktop** needs `https://claude.ai/api/mcp/auth_callback`,  
    **ChatGPT** generates a different one for each client using the format: `https://chatgpt.com/connector/oauth/<random_chars>`,  
@@ -69,7 +69,7 @@ The Microsoft MCP Server for Enterprise works with any MCP-compatible client tha
 > ⚠️ Notes:
 >
 > - Dynamic Client Registration (DCR) is not supported, but we are working to support OAuth Client ID Metadata Documents (CIMD) in a future release.
-> - ChatGPT, Claude, and GitHub Copilot CLI require a **custom client Id**: register your own MCP Client application in your tenant, assign the required MCP.* scopes, and configure the redirect URIs accordingly.
+> - ChatGPT, Claude, and other 3P Agents require a **custom client Id**: register your own MCP Client application in your tenant, assign the required MCP.* scopes, and configure the redirect URIs accordingly.
 
 ### Microsoft Agent Platforms
 
