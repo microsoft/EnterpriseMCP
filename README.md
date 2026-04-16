@@ -71,11 +71,47 @@ The Microsoft MCP Server for Enterprise is designed to work with any MCP-compati
 > - Dynamic Client Registration (DCR) is not supported, but we are working to support OAuth Client ID Metadata Documents (CIMD) in a future release.
 > - ChatGPT and Claude, and GitHub Copilot CLI are supported only with **custom client Id**: you need to register your own MCP Client application in your tenant and assign the required MCP.* scopes and configure the redirect URIs accordingly.
 
-### Visual Studio Code / GitHub Copilot CLI
+### Microsoft Agent Platforms
 
-To associate the permissions between the MCP Server and Visual Studio Code or GitHub Copilot CLI, you need to execute the following steps:
+- **[Copilot Studio](https://learn.microsoft.com/graph/mcp-server/use-enterprise-mcp-server-copilot-studio)**
+- **[Microsoft Foundry](https://learn.microsoft.com/graph/mcp-server/overview)** (see sub-pages)
+
+### Third Party MCP clients
+
+These clients require a custom MCP Client application registered in your tenant. See [Authorization and permissions](#authorization-and-permissions) to grant the required `MCP.*` scopes to your app.
+
+<details>
+<summary><b>ChatGPT</b></summary>
+
+Go to **Settings**, **Apps**, **Create App**, and fill the dialog:
+
+![ChatGPT Configuration](/assets/chatgpt_config.png)
+
+Put the App ID of the Registered app in the red box.
+
+</details>
+
+<details>
+<summary><b>Claude</b></summary>
+
+Go to **Customize**, **Connectors**, click "**+**", **Add Custom Connector**, and fill the dialog:
+
+![Claude Configuration](/assets/claude_config.png)
+
+Put the App ID of the Registered app in the red box.
+
+</details>
+
+### Visual Studio Code and GitHub Copilot CLI
+
+Visual Studio Code and GitHub Copilot CLI share the same Visual Studio Code MCP Client app Id, so their setup is grouped together. GitHub Copilot CLI can alternatively use a custom client Id — see Option 2 in its section below.
+
+#### Prerequisites
+
+These steps provision the Visual Studio Code MCP Client application in your tenant and grant it the MCP permissions. They're required for **Visual Studio Code** and for **GitHub Copilot CLI when it uses the default application Id** (Option 1 below — the Visual Studio Code MCP Client app Id). Skip them if you're configuring GitHub Copilot CLI with a custom `oauthClientId` instead (Option 2 below).
 
 1. Install Microsoft.Entra.Beta PowerShell module (version 1.0.13 or later, *requires [PowerShell 7](https://learn.microsoft.com/powershell/scripting/install/install-powershell?view=powershell-7.6))*:
+
    ```powershell
    Install-Module Microsoft.Entra.Beta -Force -AllowClobber
    ```
@@ -86,39 +122,81 @@ To associate the permissions between the MCP Server and Visual Studio Code or Gi
    Connect-Entra -Scopes 'Application.ReadWrite.All', 'DelegatedPermissionGrant.ReadWrite.All'
    ```
 
-1. Grant all permissions to Visual Studio Code / GitHub Copilot CLI:
+1. Grant the required MCP permissions to the Visual Studio Code MCP Client app (also used by GitHub Copilot CLI when configured with the default application Id):
 
    ```powershell
    Grant-EntraBetaMCPServerPermission -ApplicationName VisualStudioCode
    ```
-1. For VSCode, click [Install Microsoft MCP Server for Enterprise](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) to launch the MCP install page.
-1. Click the Install button in VS Code and Login with your account from the tenant above.
-1. For GitHub Copilot CLI, type `/mcp add` and follow the configuration:
-   ![GitHub Copilot CLI Configuration](assets/ghcp_mcp_config.png)
 
-[Learn more](https://learn.microsoft.com/powershell/module/microsoft.entra.beta.applications/grant-entrabetamcpserverpermission?view=entra-powershell-beta) about `Grant-EntraBetaMCPServerPermission`.
+[Learn more](https://learn.microsoft.com/powershell/module/microsoft.entra.beta.applications/grant-entrabetamcpserverpermission?view=entra-powershell-beta) about `Grant-EntraBetaMCPServerPermission`. For detailed installation help, see the [installation instructions](https://learn.microsoft.com/powershell/entra-powershell/installation?view=entra-powershell-beta).
 
-If you have any issue on any of the above steps, please refer to the detailed [installation instructions](https://learn.microsoft.com/powershell/entra-powershell/installation?view=entra-powershell-beta).
-You can try to execute the following to ensure Microsoft Graph PowerShell SDK Modules do not conflict with **Microsoft.Entra.Beta**:
+If the Microsoft Graph PowerShell SDK modules conflict with **Microsoft.Entra.Beta**, run:
+
 ```powershell
 Install-Module Uninstall-Graph
 Uninstall-Graph -All
 ```
 
-### Microsoft Agent Platforms
+#### Client configuration
 
-- **[Copilot Studio](https://learn.microsoft.com/graph/mcp-server/use-enterprise-mcp-server-copilot-studio)**
-- **[Microsoft Foundry](https://learn.microsoft.com/graph/mcp-server/overview)** (see sub-pages)
+<details>
+<summary><b>Visual Studio Code</b></summary>
 
-### ChatGPT
-Go to **Settings**, **Apps**, **Create App**, and fill the dialog:  
-![ChatGPT Configuration](/assets/chatgpt_config.png)
-Put the App ID of the Registered app in the red box.
+1. Click [Install Microsoft MCP Server for Enterprise](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) to launch the MCP install page.
+1. Click the Install button in VS Code and sign in with your account from the tenant above.
 
-### Claude
-Go to **Customize**, **Connectors**, Click "**+**", **Add Custom Connector**, and fill the dialog:  
-![Claude Configuration](/assets/claude_config.png)
-Put the App ID of the Registered app in the red box.
+</details>
+
+<details>
+<summary><b>GitHub Copilot CLI</b></summary>
+
+GitHub Copilot CLI can connect using either the default Visual Studio Code MCP Client app Id or a custom MCP Client app Id you register in your tenant.
+
+**Option 1 — Default (uses the Visual Studio Code app Id):**
+
+1. Complete the [Prerequisites](#prerequisites) above.
+1. Add the MCP server to Copilot CLI. You can do this interactively with `/mcp add`:
+
+   ```bash
+   /mcp add
+   ```
+
+   ![GitHub Copilot CLI Configuration](assets/ghcp_mcp_config.png)
+
+   Or manually by editing `~/.copilot/mcp-config.json`:
+
+   ```json
+   {
+     "mcpServers": {
+       "Microsoft MCP Server for Enterprise": {
+         "type": "http",
+         "url": "https://mcp.svc.cloud.microsoft/enterprise"
+       }
+     }
+   }
+   ```
+
+**Option 2 — Custom MCP Client app Id:**
+
+1. Register your own MCP Client application in your tenant and grant it the required `MCP.*` scopes — see [Authorization and permissions](#authorization-and-permissions). You don't need the PowerShell prerequisites above for this path.
+1. Specify your app Id via `oauthClientId` (set `oauthPublicClient` to `true` for public clients) in `~/.copilot/mcp-config.json`:
+
+   ```json
+   "mcp-enterprise": {
+     "type": "http",
+     "url": "https://mcp.svc.cloud.microsoft/enterprise",
+     "headers": {},
+     "tools": ["*"],
+     "oauthClientId": "37fea9af-85e8-4523-85a3-46166ea7438b",
+     "oauthPublicClient": true
+   }
+   ```
+
+In either case, sign in with your account from the provisioned tenant when prompted.
+
+For more information, see the [GitHub Copilot CLI documentation](https://docs.github.com/en/copilot/concepts/agents/about-copilot-cli).
+
+</details>
 
 ## Authorization and permissions
 
