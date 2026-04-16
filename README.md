@@ -104,11 +104,13 @@ Put the App ID of the Registered app in the red box.
 
 ### Visual Studio Code and GitHub Copilot CLI
 
-Visual Studio Code and GitHub Copilot CLI share the same Visual Studio Code MCP Client app Id, so their setup is grouped together. GitHub Copilot CLI can alternatively use a custom client Id — see Option 2 in its section below.
+Visual Studio Code and GitHub Copilot CLI share the same Visual Studio Code MCP Client app Id, so their setup is grouped together.  
+GitHub Copilot CLI can alternatively use a custom client Id; see Option 2 in its section below.
 
 #### Prerequisites
 
-These steps provision the Visual Studio Code MCP Client application in your tenant and grant it the MCP permissions. They're required for **Visual Studio Code** and for **GitHub Copilot CLI when it uses the default application Id** (Option 1 below — the Visual Studio Code MCP Client app Id). Skip them if you're configuring GitHub Copilot CLI with a custom `oauthClientId` instead (Option 2 below).
+These steps provision the Visual Studio Code MCP Client application in your tenant and grant it the MCP permissions.  
+They're required for **Visual Studio Code** and for **GitHub Copilot CLI when it uses the default application Id** (Option 1 below). Skip them if you're configuring GitHub Copilot CLI with a custom `oauthClientId` instead (Option 2 below).
 
 1. Install Microsoft.Entra.Beta PowerShell module (version 1.0.13 or later, *requires [PowerShell 7](https://learn.microsoft.com/powershell/scripting/install/install-powershell?view=powershell-7.6))*:
 
@@ -137,7 +139,7 @@ Install-Module Uninstall-Graph
 Uninstall-Graph -All
 ```
 
-#### Client configuration
+and retry from step #1.
 
 <details>
 <summary><b>Visual Studio Code</b></summary>
@@ -163,33 +165,21 @@ GitHub Copilot CLI can connect using either the default Visual Studio Code MCP C
 
    ![GitHub Copilot CLI Configuration](assets/ghcp_mcp_config.png)
 
-   Or manually by editing `~/.copilot/mcp-config.json`:
-
-   ```json
-   {
-     "mcpServers": {
-       "Microsoft MCP Server for Enterprise": {
-         "type": "http",
-         "url": "https://mcp.svc.cloud.microsoft/enterprise"
-       }
-     }
-   }
-   ```
-
 **Option 2 — Custom MCP Client app Id:**
 
-1. Register your own MCP Client application in your tenant and grant it the required `MCP.*` scopes — see [Authorization and permissions](#authorization-and-permissions). You don't need the PowerShell prerequisites above for this path.
-1. Specify your app Id via `oauthClientId` (set `oauthPublicClient` to `true` for public clients) in `~/.copilot/mcp-config.json`:
+1. Register your own MCP Client application in your tenant and grant it the required `MCP.*` scopes (see [Authorization and permissions](#authorization-and-permissions)).
+1. Set `http://127.0.0.1:51001` as Redirect URI for "Mobile and desktop applications"
+1. Specify your app Id via `oauthClientId` and `oauthPublicClient` to `true` in `~/.copilot/mcp-config.json`:
 
    ```json
    "mcp-enterprise": {
-     "type": "http",
-     "url": "https://mcp.svc.cloud.microsoft/enterprise",
-     "headers": {},
-     "tools": ["*"],
-     "oauthClientId": "37fea9af-85e8-4523-85a3-46166ea7438b",
-     "oauthPublicClient": true
-   }
+         "type": "http",
+         "url": "https://mcp.svc.cloud.microsoft/enterprise",
+         "headers": {},
+         "tools": [ "*" ],
+         "oauthClientId": "<REGISTERED_APP_CLIENT_ID>",
+         "oauthPublicClient": true
+       }
    ```
 
 In either case, sign in with your account from the provisioned tenant when prompted.
