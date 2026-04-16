@@ -1,6 +1,6 @@
 # Microsoft MCP Server for Enterprise
 
-![Microsoft MCP Server for Enterprise Logo](MCPEnterprise_EntraGradient.svg)
+![Microsoft MCP Server for Enterprise Logo](assets/MCPEnterprise_EntraGradient.svg)
 
 ## Overview
 
@@ -11,25 +11,60 @@ Full Documentation: [Overview of Microsoft MCP Server for Enterprise](https://le
 
 ## MCP Server Provisioning (execute once per tenant)
 
-To get started with the Microsoft MCP Server for Enterprise, follow these steps to provision the MCP Server in your tenant (requires Microsoft Entra admin privileges):
+To get started with the Microsoft MCP Server for Enterprise, you need to:
 
-1. Install Microsoft.Entra.Beta PowerShell module (version 1.0.13 or later):
+1. **Provision the MCP Server**.  In [Graph Explorer](https://developer.microsoft.com/graph/graph-explorer?request=servicePrincipals&method=POST&version=v1.0&GraphUrl=https://graph.microsoft.com&requestBody=InsgXCJhcHBJZFwiOiBcImU4Yzc3ZGMyLTY5YjMtNDNmNC1iYzUxLTMyMTNjOWQ5MTViNFwiIH0i), send:  
+   `POST https://graph.microsoft.com/v1.0/servicePrincipals`  
+   `Body: { "appId": "e8c77dc2-69b3-43f4-bc51-3213c9d915b4" }`
 
+1. **[Register a new app](https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/CreateApplicationBlade/quickStartType~/null/isMSAApp~/false)**, representing the MCP Client.
+   Set the appropriate ReplyUrl depending on the Client.  For example:  
+   **Claude Desktop** needs `https://claude.ai/api/mcp/auth_callback`,  
+   **ChatGPT** generates a different one for each client using the format: `https://chatgpt.com/connector/oauth/<random_chars>`,  
+   **Microsoft Foundry** generates a different ones per connector using the format: `https://<random_chars>.<region>.azurecontainerapps.io/rest/oauth2-credential/callback`
+
+2. Associate the MCP permissions (`MCP.<Microsoft_Graph_Scope>`) between the MCP Server and the MCP Client  
+   ![Associate MCP Client Permissions](assets/mcp_client_permissions.png)
+
+### Info Table
+
+| Property | Value | Notes |
+| -- | -- | -- |
+| MCP Endpoint | `https://mcp.svc.cloud.microsoft/enterprise` | Configure in your agent or mcp.json |
+| MCP Server App Id | `e8c77dc2-69b3-43f4-bc51-3213c9d915b4` | Use for Provisioning and telemetries |
+| MCP Client App Id | \< The one you registered in your tenant \> | Required to configure your agent |
+| Token URL | `https://login.microsoftonline.com/organizations/oauth2/v2.0/token` | Required in some agents config |
+| Token endpoint auth method | `client_secret_post` | Required in some agents config | 
+| Auth URL | `https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize` | Required in some agents config | 
+| Refresh URL | `https://login.microsoftonline.com/organizations/oauth2/v2.0/token` | Required in some agents config | 
+| Scopes | `api://e8c77dc2-69b3-43f4-bc51-3213c9d915b4/.default` | Required in some agents config |
+
+## Visual Studio Code / GitHub Copilot CLI Configuration
+
+To associate the permissions between the MCP Server and Visual Studio Code or GitHub Copilot CLI, you need to execute the following steps:
+
+1. Install Microsoft.Entra.Beta PowerShell module (version 1.0.13 or later, *requires [PowerShell 7](https://learn.microsoft.com/powershell/scripting/install/install-powershell?view=powershell-7.6))*:
    ```powershell
    Install-Module Microsoft.Entra.Beta -Force -AllowClobber
    ```
 
-1. Connect Microsoft Entra ID to the tenant you'd like to register the MCP Server:
+1. Connect Microsoft Entra ID to your tenant:
 
    ```powershell
    Connect-Entra -Scopes 'Application.ReadWrite.All', 'DelegatedPermissionGrant.ReadWrite.All'
    ```
 
-1. Register the MCP Server for Enterprise in your tenant and grant all permissions to Visual Studio Code:
+1. Grant all permissions to Visual Studio Code / GitHub Copilot CLI:
 
    ```powershell
    Grant-EntraBetaMCPServerPermission -ApplicationName VisualStudioCode
    ```
+1. For VSCode, click [Install Microsoft MCP Server for Enterprise](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) to launch the MCP install page.
+1. Click the Install button in VS Code and Login with your account from the tenant above.
+1. For GitHub Copilot CLI, type `/mcp add` and follow the configuration:  
+   ![GitHub Copilot CLI Configuration](/assets/ghcp_mcp_config.png)
+
+[Learn more](https://learn.microsoft.com/powershell/module/microsoft.entra.beta.applications/grant-entrabetamcpserverpermission?view=entra-powershell-beta) about `Grant-EntraBetaMCPServerPermission`.  
 
 If you have any issue on any of the above steps, please refer to the detailed [installation instructions](https://learn.microsoft.com/powershell/entra-powershell/installation?view=entra-powershell-beta).
 You can try to execute the following to ensure Microsoft Graph PowerShell SDK Modules do not conflict with **Microsoft.Entra.Beta**:
@@ -38,25 +73,8 @@ Install-Module Uninstall-Graph
 Uninstall-Graph -All
 ```
 
-## Visual Studio Code Configuration
-
-1. Click [Install Microsoft MCP Server for Enterprise](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) to launch VS Code's MCP install page.
-1. Click the Install button in VS Code and Login with your account from the tenant above.
-1. Open Copilot Chat and ask a question about your tenant.
-
-## Azure Foundry Configuration
-
-1. Navigate to [Azure Foundry Portal](https://ai.azure.com/nextgen).
-1. Go to Agents on the left and click **Create agent** button on the top right.
-1. Assign a name, and expand Tools section
-1. Click **Add** and then Add a new tool
-1. Go to the Catalog and search for "Microsoft MCP Server for Enterprise"
-1. Select "Microsoft MCP Server for Enterprise" and click **Create**
-1. Add the Client ID of your MCP Client (you might need to register a new MCP Client application in your tenant, and assign the required MCP.* scopes)
-1. Click Connect
-1. Update the Redirect URI of your MCP Client application to include the Azure Foundry redirect URI (shown in the portal after clicking Connect)
-1. Ask a question about your tenant data in the Azure Foundry chat interface.
-1. Click Open Consent button and login with your Admin account from the tenant above.
+## Copilot Studio and Microsoft Foundry Configuration
+Follow instructions [here (see sub-pages)](https://learn.microsoft.com/graph/mcp-server/overview).
 
 ## Tools
 
@@ -81,7 +99,7 @@ In particular, the MCP Server can handle queries related to:
 1. **Provenance and investigation**: End‑to‑end telemetry (sign‑in, audit, provisioning, network), health alerts, and SLA/availability.
 1. **Optimize spending & hygiene**: License counts/usage, unused or stale apps/groups, domain configuration and contacts.
 
-## Supported Clients
+## Supported Clients and Configurations
 
 The Microsoft MCP Server for Enterprise is designed to work with any MCP-compatible client *supporting the latest standard*.
 
@@ -89,6 +107,55 @@ The Microsoft MCP Server for Enterprise is designed to work with any MCP-compati
 >
 > - Dynamic Client Registration (DCR) is not supported, but we are working to support OAuth Client ID Metadata Documents (CIMD) in a future release.
 > - ChatGPT and Claude, and GitHub Copilot CLI are supported only with **custom client Id**: you need to register your own MCP Client application in your tenant and assign the required MCP.* scopes and configure the redirect URIs accordingly.
+
+### Visual Studio Code / GitHub Copilot CLI
+
+To associate the permissions between the MCP Server and Visual Studio Code or GitHub Copilot CLI, you need to execute the following steps:
+
+1. Install Microsoft.Entra.Beta PowerShell module (version 1.0.13 or later, *requires [PowerShell 7](https://learn.microsoft.com/powershell/scripting/install/install-powershell?view=powershell-7.6))*:
+   ```powershell
+   Install-Module Microsoft.Entra.Beta -Force -AllowClobber
+   ```
+
+1. Connect Microsoft Entra ID to your tenant:
+
+   ```powershell
+   Connect-Entra -Scopes 'Application.ReadWrite.All', 'DelegatedPermissionGrant.ReadWrite.All'
+   ```
+
+1. Grant all permissions to Visual Studio Code / GitHub Copilot CLI:
+
+   ```powershell
+   Grant-EntraBetaMCPServerPermission -ApplicationName VisualStudioCode
+   ```
+1. For VSCode, click [Install Microsoft MCP Server for Enterprise](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) to launch the MCP install page.
+1. Click the Install button in VS Code and Login with your account from the tenant above.
+1. For GitHub Copilot CLI, type `/mcp add` and follow the configuration:  
+   ![GitHub Copilot CLI Configuration](/assets/ghcp_mcp_config.png)
+
+[Learn more](https://learn.microsoft.com/powershell/module/microsoft.entra.beta.applications/grant-entrabetamcpserverpermission?view=entra-powershell-beta) about `Grant-EntraBetaMCPServerPermission`.  
+
+If you have any issue on any of the above steps, please refer to the detailed [installation instructions](https://learn.microsoft.com/powershell/entra-powershell/installation?view=entra-powershell-beta).
+You can try to execute the following to ensure Microsoft Graph PowerShell SDK Modules do not conflict with **Microsoft.Entra.Beta**:
+```powershell
+Install-Module Uninstall-Graph
+Uninstall-Graph -All
+```
+
+### Microsoft Agent Platforms
+
+- **[Copilot Studio](https://learn.microsoft.com/graph/mcp-server/use-enterprise-mcp-server-copilot-studio)**
+- **[Microsoft Foundry](https://learn.microsoft.com/graph/mcp-server/overview)** (see sub-pages)
+
+### ChatGPT
+Go to **Settings**, **Apps**, **Create App**, and fill the dialog:  
+![ChatGPT Configuration](/assets/chatgpt_config.png)
+Put the App ID of the Registered app in the red box.
+
+### Claude
+Go to **Customize**, **Connectors**, Click "**+**", **Add Custom Connector**, and fill the dialog:  
+![Claude Configuration](/assets/claude_config.png)
+Put the App ID of the Registered app in the red box.
 
 ## Authorization and permissions
 
