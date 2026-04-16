@@ -245,7 +245,7 @@ MicrosoftGraphActivityLogs
 
 ## Support and reference
 
-For documentation, troubleshooting, and feedback, refer to the official Microsoft Learn documentation and support channels.
+For documentation, troubleshooting, and feedback, refer to the official [Microsoft Learn documentation](https://learn.microsoft.com/graph/mcp-server/overview) and support channels.
 
 ## Security and compliance
 
