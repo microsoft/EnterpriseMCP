@@ -74,7 +74,7 @@ The Microsoft MCP Server for Enterprise works with any MCP-compatible client tha
 ### Microsoft Agent Platforms
 
 - **[Copilot Studio](https://learn.microsoft.com/graph/mcp-server/use-enterprise-mcp-server-copilot-studio)**
-- **[Microsoft Foundry](https://learn.microsoft.com/graph/mcp-server/overview)** (see sub-pages)
+- **[Microsoft Foundry](https://learn.microsoft.com/graph/mcp-server/use-enterprise-mcp-server-microsoft-foundry)**
 
 ### Third Party MCP clients
 
