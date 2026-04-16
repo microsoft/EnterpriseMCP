@@ -5,19 +5,19 @@
 ## Overview
 
 Built on the open [Model Context Protocol](https://modelcontextprotocol.io), the public preview of **Microsoft MCP Server for Enterprise** lets AI agents access **Microsoft Entra** data by converting natural language queries into Microsoft Graph API calls.
-This MCP server empowers developers and IT Administrators to integrate the management of organizational data into AI-powered workflows.
+Developers and IT administrators use it to query Microsoft Entra data from their AI-powered workflows.
 
 Full Documentation: [Overview of Microsoft MCP Server for Enterprise](https://learn.microsoft.com/graph/mcp-server/overview)
 
 ## MCP Server Provisioning (execute once per tenant)
 
-To get started with the Microsoft MCP Server for Enterprise, you need to:
+To set up the MCP Server for your tenant:
 
 1. **Provision the MCP Server**.  In [Graph Explorer](https://developer.microsoft.com/graph/graph-explorer?request=servicePrincipals&method=POST&version=v1.0&GraphUrl=https://graph.microsoft.com&requestBody=InsgXCJhcHBJZFwiOiBcImU4Yzc3ZGMyLTY5YjMtNDNmNC1iYzUxLTMyMTNjOWQ5MTViNFwiIH0i), send:  
    `POST https://graph.microsoft.com/v1.0/servicePrincipals`  
    `Body: { "appId": "e8c77dc2-69b3-43f4-bc51-3213c9d915b4" }`
 
-2. **[Register a new app](https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/CreateApplicationBlade/quickStartType~/null/isMSAApp~/false)**, representing the MCP Client.
+2. **[Register a new app](https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/CreateApplicationBlade/quickStartType~/null/isMSAApp~/false)**, representing the MCP Client.  
    Set the appropriate Redirect URI (also called Reply URL) depending on the client. For example:  
    **Claude Desktop** needs `https://claude.ai/api/mcp/auth_callback`,  
    **ChatGPT** generates a different one for each client using the format: `https://chatgpt.com/connector/oauth/<random_chars>`,  
@@ -41,8 +41,8 @@ To get started with the Microsoft MCP Server for Enterprise, you need to:
 
 ## Tools
 
-This MCP Server is atypical: instead of exposing a separate tool per Microsoft Graph operation, it applies Retrieval-Augmented Generation (RAG) and few-shot prompting to generate complete Microsoft Graph queries.  
-It exposes only three tools to implement a reliable and grounded workflow:
+This MCP Server uses Retrieval-Augmented Generation (RAG) and few-shot prompting to generate complete Microsoft Graph queries rather than exposing a separate tool per Graph operation.  
+It exposes three tools:
 
 1. **`microsoft_graph_suggest_queries`**: Finds relevant Microsoft Graph API calls based on user intent.
 1. **`microsoft_graph_get`**: Executes read-only Microsoft Graph API calls, respecting User roles and MCP Client scopes.
@@ -50,9 +50,9 @@ It exposes only three tools to implement a reliable and grounded workflow:
 
 ## Current scope and capabilities
 
-For **Public Preview**, our focus is to support **read-only** enterprise IT scenarios focused on Microsoft Entra identity and directory operations (user, group, application, device management, and administrative actions).
+For **Public Preview**, we support **read-only** enterprise IT scenarios in Microsoft Entra identity and directory operations (user, group, application, device management, and administrative actions).
 
-In particular, the MCP Server can handle queries related to:
+The MCP Server handles queries such as:
 
 1. **Security posture**: authentication methods/strengths, Conditional Access, Security Defaults.
 1. **Privileged access**: Who has which directory roles, how assigned (direct vs group), and PIM status.
@@ -64,18 +64,56 @@ In particular, the MCP Server can handle queries related to:
 
 ## Supported Clients and Configurations
 
-The Microsoft MCP Server for Enterprise is designed to work with any MCP-compatible client *supporting the latest standard*.
+The Microsoft MCP Server for Enterprise works with any MCP-compatible client that supports the latest standard.
 
 > ⚠️ Notes:
 >
 > - Dynamic Client Registration (DCR) is not supported, but we are working to support OAuth Client ID Metadata Documents (CIMD) in a future release.
-> - ChatGPT and Claude, and GitHub Copilot CLI are supported only with **custom client Id**: you need to register your own MCP Client application in your tenant and assign the required MCP.* scopes and configure the redirect URIs accordingly.
+> - ChatGPT, Claude, and other 3P Agents require a **custom client Id**: register your own MCP Client application in your tenant, assign the required MCP.* scopes, and configure the redirect URIs accordingly.
 
-### Visual Studio Code / GitHub Copilot CLI
+### Microsoft Agent Platforms
 
-To associate the permissions between the MCP Server and Visual Studio Code or GitHub Copilot CLI, you need to execute the following steps:
+- **[Copilot Studio](https://learn.microsoft.com/graph/mcp-server/use-enterprise-mcp-server-copilot-studio)**
+- **[Microsoft Foundry](https://learn.microsoft.com/graph/mcp-server/use-enterprise-mcp-server-microsoft-foundry)**
+
+### Third Party MCP clients
+
+These clients require a custom MCP Client application registered in your tenant. See [Authorization and permissions](#authorization-and-permissions) to grant the required `MCP.*` scopes to your app.
+
+<details>
+<summary><b>ChatGPT</b></summary>
+
+Go to **Settings**, **Apps**, **Create App**, and fill the dialog:
+
+![ChatGPT Configuration](/assets/chatgpt_config.png)
+
+Put the App ID of the Registered app in the red box.
+
+</details>
+
+<details>
+<summary><b>Claude</b></summary>
+
+Go to **Customize**, **Connectors**, click "**+**", **Add Custom Connector**, and fill the dialog:
+
+![Claude Configuration](/assets/claude_config.png)
+
+Put the App ID of the Registered app in the red box.
+
+</details>
+
+### Visual Studio Code and GitHub Copilot CLI
+
+Visual Studio Code and GitHub Copilot CLI share the same Visual Studio Code MCP Client app Id, so they use the same setup.  
+GitHub Copilot CLI can also use a custom client Id (see Option 2).
+
+#### Prerequisites
+
+These steps provision the Visual Studio Code MCP Client application in your tenant and grant it the MCP permissions.  
+They're required for **Visual Studio Code** and for **GitHub Copilot CLI when it uses the default application Id** (Option 1 below). Skip them if you're configuring GitHub Copilot CLI with a custom `oauthClientId` instead (Option 2 below).
 
 1. Install Microsoft.Entra.Beta PowerShell module (version 1.0.13 or later, *requires [PowerShell 7](https://learn.microsoft.com/powershell/scripting/install/install-powershell?view=powershell-7.6))*:
+
    ```powershell
    Install-Module Microsoft.Entra.Beta -Force -AllowClobber
    ```
@@ -86,39 +124,67 @@ To associate the permissions between the MCP Server and Visual Studio Code or Gi
    Connect-Entra -Scopes 'Application.ReadWrite.All', 'DelegatedPermissionGrant.ReadWrite.All'
    ```
 
-1. Grant all permissions to Visual Studio Code / GitHub Copilot CLI:
+1. Grant all MCP permissions to the Visual Studio Code MCP Client app (also used by GitHub Copilot CLI when configured with the default application Id):
 
    ```powershell
    Grant-EntraBetaMCPServerPermission -ApplicationName VisualStudioCode
    ```
-1. For VSCode, click [Install Microsoft MCP Server for Enterprise](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) to launch the MCP install page.
-1. Click the Install button in VS Code and Login with your account from the tenant above.
-1. For GitHub Copilot CLI, type `/mcp add` and follow the configuration:
-   ![GitHub Copilot CLI Configuration](assets/ghcp_mcp_config.png)
 
-[Learn more](https://learn.microsoft.com/powershell/module/microsoft.entra.beta.applications/grant-entrabetamcpserverpermission?view=entra-powershell-beta) about `Grant-EntraBetaMCPServerPermission`.
+[Learn more](https://learn.microsoft.com/powershell/module/microsoft.entra.beta.applications/grant-entrabetamcpserverpermission?view=entra-powershell-beta) about `Grant-EntraBetaMCPServerPermission`. For detailed installation help, see the [installation instructions](https://learn.microsoft.com/powershell/entra-powershell/installation?view=entra-powershell-beta).
 
-If you have any issue on any of the above steps, please refer to the detailed [installation instructions](https://learn.microsoft.com/powershell/entra-powershell/installation?view=entra-powershell-beta).
-You can try to execute the following to ensure Microsoft Graph PowerShell SDK Modules do not conflict with **Microsoft.Entra.Beta**:
+If the Microsoft Graph PowerShell SDK modules conflict with **Microsoft.Entra.Beta**, run the following and retry from step 1:
+
 ```powershell
 Install-Module Uninstall-Graph
 Uninstall-Graph -All
 ```
 
-### Microsoft Agent Platforms
+<details>
+<summary><b>Visual Studio Code</b></summary>
 
-- **[Copilot Studio](https://learn.microsoft.com/graph/mcp-server/use-enterprise-mcp-server-copilot-studio)**
-- **[Microsoft Foundry](https://learn.microsoft.com/graph/mcp-server/overview)** (see sub-pages)
+1. Click [Install Microsoft MCP Server for Enterprise](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) to launch the MCP install page.
+1. Click the Install button in VS Code and sign in with your account from the tenant above.
 
-### ChatGPT
-Go to **Settings**, **Apps**, **Create App**, and fill the dialog:  
-![ChatGPT Configuration](/assets/chatgpt_config.png)
-Put the App ID of the Registered app in the red box.
+</details>
 
-### Claude
-Go to **Customize**, **Connectors**, Click "**+**", **Add Custom Connector**, and fill the dialog:  
-![Claude Configuration](/assets/claude_config.png)
-Put the App ID of the Registered app in the red box.
+<details>
+<summary><b>GitHub Copilot CLI</b></summary>
+
+GitHub Copilot CLI can connect using either the default Visual Studio Code MCP Client app Id or a custom MCP Client app Id you register in your tenant.
+
+**Option 1. Default (uses the Visual Studio Code app Id)**
+
+1. Complete the [Prerequisites](#prerequisites) above.
+1. Add the MCP server to Copilot CLI. You can do this interactively with `/mcp add`:
+
+   ```bash
+   /mcp add
+   ```
+
+   ![GitHub Copilot CLI Configuration](assets/ghcp_mcp_config.png)
+
+**Option 2. Custom MCP Client app Id**
+
+1. Register your own MCP Client application in your tenant and grant it the required `MCP.*` scopes (see [Authorization and permissions](#authorization-and-permissions)).
+1. Set `http://127.0.0.1:51001` as Redirect URI for "Mobile and desktop applications"
+1. Specify your app Id via `oauthClientId` and `oauthPublicClient` to `true` in `~/.copilot/mcp-config.json`:
+
+   ```json
+   "mcp-enterprise": {
+         "type": "http",
+         "url": "https://mcp.svc.cloud.microsoft/enterprise",
+         "headers": {},
+         "tools": [ "*" ],
+         "oauthClientId": "<REGISTERED_APP_CLIENT_ID>",
+         "oauthPublicClient": true
+       }
+   ```
+
+In either case, sign in with your account from the provisioned tenant when prompted.
+
+For more information, see the [GitHub Copilot CLI documentation](https://docs.github.com/en/copilot/concepts/agents/about-copilot-cli).
+
+</details>
 
 ## Authorization and permissions
 
@@ -140,12 +206,12 @@ Learn more: [Manage MCP Server for Enterprise permissions](https://learn.microso
 
 ## Advantages
 
-1. **Remote MCP Server**: Easy to configure, fully compliant, and highly reliable—deployed in the same regions as Microsoft Graph for optimal performance.
-1. **IT Admins are in control**: MCP clients need specific MCP.* scopes (mirroring Microsoft Graph Scopes) to be granted to access your tenant data.
-1. **Simplified architecture**: Works with just 3 tools instead of managing individual tools for every API operation.
-1. **High-quality query generation**: Generates accurate queries using over 500 real-world examples through RAG (Retrieval-Augmented Generation).
-1. **Full auditability**: Easily audit all MCP operations since they execute under the same App ID with a specific user agent.
-1. **No extra license required**: only existing Microsoft Entra and Microsoft Graph API licenses applies.
+1. **Remote MCP Server**: easy to configure and standards-compliant, deployed in the same regions as Microsoft Graph.
+1. **IT Admins in control**: MCP clients need specific MCP.* scopes (mirroring Microsoft Graph scopes) to access your tenant data.
+1. **Simplified architecture**: 3 tools cover the workflow instead of one tool per API operation.
+1. **High-quality query generation**: generates accurate queries from over 500 real-world examples via RAG (Retrieval-Augmented Generation).
+1. **Full auditability**: all MCP operations run under the same App ID with a specific user agent.
+1. **No extra license required**: your existing Microsoft Entra and Microsoft Graph API licenses apply.
 
 ## Availability, Roadmap and feedback
 
@@ -179,7 +245,7 @@ MicrosoftGraphActivityLogs
 
 ## Support and reference
 
-For documentation, troubleshooting, and feedback, refer to the official Microsoft Learn documentation and support channels.
+For documentation, troubleshooting, and feedback, refer to the official [Microsoft Learn documentation](https://learn.microsoft.com/graph/mcp-server/overview) and support channels.
 
 ## Security and compliance
 
