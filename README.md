@@ -62,7 +62,7 @@ To associate the permissions between the MCP Server and Visual Studio Code or Gi
 1. For VSCode, click [Install Microsoft MCP Server for Enterprise](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) to launch the MCP install page.
 1. Click the Install button in VS Code and Login with your account from the tenant above.
 1. For GitHub Copilot CLI, type `/mcp add` and follow the configuration:  
-   ![GitHub Copilot CLI Configuration](/assets/ghcp_mcp_config.png)
+   ![GitHub Copilot CLI Configuration](assets/ghcp_mcp_config.png)
 
 [Learn more](https://learn.microsoft.com/powershell/module/microsoft.entra.beta.applications/grant-entrabetamcpserverpermission?view=entra-powershell-beta) about `Grant-EntraBetaMCPServerPermission`.  
 
