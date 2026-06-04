@@ -1,6 +1,6 @@
-# Microsoft MCP Server for Enterprise
+# ![Microsoft MCP Server for Enterprise Logo](assets/MCPEnterprise_EntraGradient.svg) Microsoft MCP Server for Enterprise
 
-![Microsoft MCP Server for Enterprise Logo](assets/MCPEnterprise_EntraGradient.svg)
+> ⚠️ If Visual Studio Code displays the error `Error getting token from server metadata: Error: Cannot force new registration for a non-dynamic authentication provider.`, change `"microsoft-authentication.implementation"` from `"msal"` to `"msal-no-broker"` in your Settings.
 
 ## Overview
 
@@ -22,6 +22,9 @@ To set up the MCP Server for your tenant:
    **Claude Desktop** needs `https://claude.ai/api/mcp/auth_callback`,  
    **ChatGPT** generates a different one for each client using the format: `https://chatgpt.com/connector/oauth/<random_chars>`,  
    **Microsoft Foundry** generates a different Redirect URI for each connector using the format: `https://<random_chars>.<region>.azurecontainerapps.io/rest/oauth2-credential/callback`
+
+   > Redirect URI type matters in Microsoft Entra. If you add the URI under **Web**, Entra treats the app as a **confidential client**. Use that for apps that run on a server and can protect credentials (like *Copilot Studio*). At sign-in, Entra expects that app to authenticate with a `client_secret` or a certificate-based `client_assertion`.  
+   If you add the URI under **Mobile and desktop applications** or another public-client platform, Entra treats the app as a **public client**. Use that for desktop, CLI, or device apps that cannot keep a secret (like *ChatGPT* or *Claude*). These apps usually use the authorization code flow with PKCE instead of a client secret.
 
 3. Associate the MCP permissions (`MCP.<Microsoft_Graph_Scope>`) between the MCP Server and the MCP Client  
    ![Associate MCP Client Permissions](assets/mcp_client_permissions.png)
@@ -144,6 +147,8 @@ Uninstall-Graph -All
 
 1. Click [Install Microsoft MCP Server for Enterprise](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) to launch the MCP install page.
 1. Click the Install button in VS Code and sign in with your account from the tenant above.
+1. If Visual Studio Code displays the error `Error getting token from server metadata: Error: Cannot force new registration for a non-dynamic authentication provider.`, change `"microsoft-authentication.implementation"` from `"msal"` to `"msal-no-broker"` in your Settings:
+![alt text](assets/msal_no_broker.png)
 
 </details>
 
@@ -155,7 +160,7 @@ GitHub Copilot CLI can connect using either the default Visual Studio Code MCP C
 **Option 1. Default (uses the Visual Studio Code app Id)**
 
 1. Complete the [Prerequisites](#prerequisites) above.
-1. Add the MCP server to Copilot CLI. You can do this interactively with `/mcp add`:
+2. Add the MCP server to Copilot CLI. You can do this interactively with `/mcp add`:
 
    ```bash
    /mcp add
