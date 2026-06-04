@@ -149,6 +149,7 @@ Uninstall-Graph -All
 
 1. Click [Install Microsoft MCP Server for Enterprise](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) to launch the MCP install page.
 1. Click the Install button in VS Code and sign in with your account from the tenant above.
+1. If Visual Studio Code displays the error `Error getting token from server metadata: Error: Cannot force new registration for a non-dynamic authentication provider.`, change `"microsoft-authentication.implementation"` from `"msal"` to `"msal-no-broker"` in your Settings.
 
 </details>
 
@@ -160,7 +161,7 @@ GitHub Copilot CLI can connect using either the default Visual Studio Code MCP C
 **Option 1. Default (uses the Visual Studio Code app Id)**
 
 1. Complete the [Prerequisites](#prerequisites) above.
-1. Add the MCP server to Copilot CLI. You can do this interactively with `/mcp add`:
+2. Add the MCP server to Copilot CLI. You can do this interactively with `/mcp add`:
 
    ```bash
    /mcp add
