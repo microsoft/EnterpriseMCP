@@ -55,7 +55,7 @@ For **Public Preview**, we support **read-only** enterprise IT scenarios in Micr
 
 The MCP Server handles queries such as:
 
-1. **Security posture**: authentication methods/strengths and Security Defaults.
+1. **Security posture**: authentication methods/strengths, Conditional Access, Security Defaults.
 1. **Privileged access**: Who has which directory roles, how assigned (direct vs group), and PIM status.
 1. **Application risk**: Which Apps / Service Principals exist, who owns them, what permissions/SSO they use, and which are ownerless or external.
 1. **Access governance**: Who has access to what (users, groups, packages); review decisions, automate joiner/mover/leaver.
