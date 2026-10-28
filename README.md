@@ -1,7 +1,5 @@
 # ![Microsoft MCP Server for Enterprise Logo](assets/MCPEnterprise_EntraGradient.svg) Microsoft MCP Server for Enterprise
 
-> ⚠️ If Visual Studio Code displays the error `Error getting token from server metadata: Error: Cannot force new registration for a non-dynamic authentication provider.`, change `"microsoft-authentication.implementation"` from `"msal"` to `"msal-no-broker"` in your Settings.
-
 ## Overview
 
 Built on the open [Model Context Protocol](https://modelcontextprotocol.io), the public preview of **Microsoft MCP Server for Enterprise** lets AI agents access **Microsoft Entra** data by converting natural language queries into Microsoft Graph API calls.
@@ -18,10 +16,7 @@ To set up the MCP Server for your tenant:
    `Body: { "appId": "e8c77dc2-69b3-43f4-bc51-3213c9d915b4" }`
 
 2. **[Register a new app](https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/CreateApplicationBlade/quickStartType~/null/isMSAApp~/false)**, representing the MCP Client.  
-   Set the appropriate Redirect URI (also called Reply URL) depending on the client. For example:  
-   **Claude Desktop** needs `https://claude.ai/api/mcp/auth_callback`,  
-   **ChatGPT** generates a different one for each client using the format: `https://chatgpt.com/connector/oauth/<random_chars>`,  
-   **Microsoft Foundry** generates a different Redirect URI for each connector using the format: `https://<random_chars>.<region>.azurecontainerapps.io/rest/oauth2-credential/callback`
+   Set the appropriate Redirect URI (also called Reply URL) depending on the client (see table below).
 
    > Redirect URI type matters in Microsoft Entra. If you add the URI under **Web**, Entra treats the app as a **confidential client**. Use that for apps that run on a server and can protect credentials (like *Copilot Studio*). At sign-in, Entra expects that app to authenticate with a `client_secret` or a certificate-based `client_assertion`.  
    If you add the URI under **Mobile and desktop applications** or another public-client platform, Entra treats the app as a **public client**. Use that for desktop, CLI, or device apps that cannot keep a secret (like *ChatGPT* or *Claude*). These apps usually use the authorization code flow with PKCE instead of a client secret.
@@ -29,18 +24,42 @@ To set up the MCP Server for your tenant:
 3. Associate the MCP permissions (`MCP.<Microsoft_Graph_Scope>`) between the MCP Server and the MCP Client  
    ![Associate MCP Client Permissions](assets/mcp_client_permissions.png)
 
+<details>
+<summary><b>Create a custom VS Code or GitHub Copilot CLI client with PowerShell</b></summary>
+
+After provisioning the MCP Server in step 1, use Microsoft.Entra.Beta 1.3.0 or later and an appropriate administrator role to create a public client and grant the scopes you need. This example grants user read access. Set `$redirectUri` to `http://localhost` for VS Code or `http://127.0.0.1:51001` for GitHub Copilot CLI:
+
+```powershell
+Connect-Entra -Scopes 'Application.ReadWrite.All', 'DelegatedPermissionGrant.ReadWrite.All' -ErrorAction Stop
+$redirectUri = 'http://localhost'
+$app = New-EntraBetaApplication -DisplayName 'Enterprise MCP Client' `
+    -SignInAudience 'AzureADMyOrg' `
+    -PublicClient @{ RedirectUris = @($redirectUri) } -ErrorAction Stop
+$app.AppId
+Grant-EntraBetaMCPServerPermission -ApplicationId $app.AppId -Scopes 'MCP.User.Read.All' -ErrorAction Stop
+```
+
+Use the returned app ID in the [VS Code or GitHub Copilot CLI custom client configuration](#visual-studio-code-and-github-copilot-cli). The grant cmdlet provisions the client service principal if needed.
+
+</details>
+
+The PowerShell setup uses `Application.ReadWrite.All`, `DelegatedPermissionGrant.ReadWrite.All`, and an appropriate Entra administrator role. The MCP Client doesn't need these setup permissions at runtime: you can revoke setup-only grants and release setup-only roles after provisioning. Managing consent later requires administrator authorization again.
+
 ### Info Table
 
-| Property                   | Value                                                                   | Notes                               |
-| -------------------------- | ----------------------------------------------------------------------- | ----------------------------------- |
-| MCP Endpoint               | `https://mcp.svc.cloud.microsoft/enterprise`                            | Configure in your agent or mcp.json |
-| MCP Server App Id          | `e8c77dc2-69b3-43f4-bc51-3213c9d915b4`                                  | Used for provisioning and telemetry |
-| MCP Client App Id          | \< The one you registered in your tenant \>                             | Required to configure your agent    |
-| Token URL                  | `https://login.microsoftonline.com/organizations/oauth2/v2.0/token`     | Required in some agents config      |
-| Token endpoint auth method | `client_secret_post`                                                    | Required in some agents config      |
-| Auth URL                   | `https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize` | Required in some agents config      |
-| Refresh URL                | `https://login.microsoftonline.com/organizations/oauth2/v2.0/token`     | Required in some agents config      |
-| Scopes                     | `api://e8c77dc2-69b3-43f4-bc51-3213c9d915b4/.default`                   | Required in some agents config      |
+| Property                     | Value                                                                                                                                                                                                                                                                                                                                                                                               | Notes                               |
+| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| MCP Endpoint                 | `https://mcp.svc.cloud.microsoft/enterprise`                                                                                                                                                                                                                                                                                                                                                        | Configure in your agent or mcp.json |
+| MCP Server App Id            | `e8c77dc2-69b3-43f4-bc51-3213c9d915b4`                                                                                                                                                                                                                                                                                                                                                              | Used for provisioning and telemetry |
+| MCP Client App Id            | \<The one you registered in your tenant\>                                                                                                                                                                                                                                                                                                                                                           | Required to configure your agent    |
+| App Redirect URI (Reply URL) | **VS Code (custom client)**: `http://localhost`</br>**GitHub Copilot CLI (custom client)**: `http://127.0.0.1:51001`</br>**Claude Desktop**: `https://claude.ai/api/mcp/auth_callback`</br>**ChatGPT**: `https://chatgpt.com/connector/oauth/<random_chars>`</br>*Refer to ChatGPT config for the random chars*</br>**Microsoft Foundry**: `https://<random_chars>.<region>.azurecontainerapps.io/rest/oauth2-credential/callback`</br>*Refer to Foundry config for random chars* | Required on your app registration   |
+| Token URL                    | `https://login.microsoftonline.com/organizations/oauth2/v2.0/token`                                                                                                                                                                                                                                                                                                                                 | Required in some agents config      |
+| Token endpoint auth method   | `client_secret_post`                                                                                                                                                                                                                                                                                                                                                                                | Required in some agents config      |
+| Auth URL                     | `https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize`                                                                                                                                                                                                                                                                                                                             | Required in some agents config      |
+| Refresh URL                  | `https://login.microsoftonline.com/organizations/oauth2/v2.0/token`                                                                                                                                                                                                                                                                                                                                 | Required in some agents config      |
+| Scopes                       | `api://e8c77dc2-69b3-43f4-bc51-3213c9d915b4/.default`                                                                                                                                                                                                                                                                                                                                               | Required in some agents config      |
+
+VS Code's default client uses a pre-registered application with its own redirect URIs. To add an HTTP `127.0.0.1` URI to a custom app through the portal, use the [application manifest](https://learn.microsoft.com/entra/identity-platform/reply-url#prefer-127001-over-localhost).
 
 ## Tools
 
@@ -70,7 +89,6 @@ The MCP Server handles queries such as:
 The Microsoft MCP Server for Enterprise works with any MCP-compatible client that supports the latest standard.
 
 > ⚠️ Notes:
->
 > - Dynamic Client Registration (DCR) is not supported, but we are working to support OAuth Client ID Metadata Documents (CIMD) in a future release.
 > - ChatGPT, Claude, and other 3P Agents require a **custom client Id**: register your own MCP Client application in your tenant, assign the required MCP.* scopes, and configure the redirect URIs accordingly.
 
@@ -107,13 +125,12 @@ Put the App ID of the Registered app in the red box.
 
 ### Visual Studio Code and GitHub Copilot CLI
 
-Visual Studio Code and GitHub Copilot CLI share the same Visual Studio Code MCP Client app Id, so they use the same setup.  
-GitHub Copilot CLI can also use a custom client Id (see Option 2).
+By default, Visual Studio Code and GitHub Copilot CLI use the same Visual Studio Code MCP Client app Id. Both can also use a custom client Id.
 
 #### Prerequisites
 
 These steps provision the Visual Studio Code MCP Client application in your tenant and grant it the MCP permissions.  
-They're required for **Visual Studio Code** and for **GitHub Copilot CLI when it uses the default application Id** (Option 1 below). Skip them if you're configuring GitHub Copilot CLI with a custom `oauthClientId` instead (Option 2 below).
+They're required when either client uses the **default application Id**. Skip them when using a custom client app instead.
 
 1. Install Microsoft.Entra.Beta PowerShell module (version 1.0.13 or later, *requires [PowerShell 7](https://learn.microsoft.com/powershell/scripting/install/install-powershell?view=powershell-7.6))*:
 
@@ -127,13 +144,30 @@ They're required for **Visual Studio Code** and for **GitHub Copilot CLI when it
    Connect-Entra -Scopes 'Application.ReadWrite.All', 'DelegatedPermissionGrant.ReadWrite.All'
    ```
 
-1. Grant all MCP permissions to the Visual Studio Code MCP Client app (also used by GitHub Copilot CLI when configured with the default application Id):
+1. Grant only the MCP scopes your scenarios require to the Visual Studio Code MCP Client app (also used by GitHub Copilot CLI with the default application Id). This example grants user read access:
 
    ```powershell
-   Grant-EntraBetaMCPServerPermission -ApplicationName VisualStudioCode
+   Grant-EntraBetaMCPServerPermission -ApplicationName VisualStudioCode -Scopes 'MCP.User.Read.All'
    ```
 
+Without `-Scopes`, the cmdlet grants all published scopes. Specifying `-Scopes` adds to existing grants; [revoke unwanted scopes](#authorization-and-permissions) if you previously granted broader access.
+
 [Learn more](https://learn.microsoft.com/powershell/module/microsoft.entra.beta.applications/grant-entrabetamcpserverpermission?view=entra-powershell-beta) about `Grant-EntraBetaMCPServerPermission`. For detailed installation help, see the [installation instructions](https://learn.microsoft.com/powershell/entra-powershell/installation?view=entra-powershell-beta).
+
+**Microsoft.Entra.Beta** is a setup dependency, not a runtime dependency. For a custom client, you can provision the server through Graph Explorer above and manage consent in the Entra admin center.
+
+To avoid module conflicts without changing your installed modules, open a new PowerShell 7 session and save the module and its dependencies to a temporary directory:
+
+```powershell
+$modulePath = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
+New-Item -ItemType Directory -Path $modulePath | Out-Null
+$modulePath
+$env:PSModulePath = $modulePath + [System.IO.Path]::PathSeparator + (Join-Path $PSHOME 'Modules')
+Save-Module -Name Microsoft.Entra.Beta -Path $modulePath
+Import-Module Microsoft.Entra.Beta
+```
+
+Run the connection and grant commands above in that session. Close the session when finished and delete the temporary directory shown by `$modulePath`.
 
 If the Microsoft Graph PowerShell SDK modules conflict with **Microsoft.Entra.Beta**, run the following and retry from step 1:
 
@@ -145,10 +179,34 @@ Uninstall-Graph -All
 <details>
 <summary><b>Visual Studio Code</b></summary>
 
+**Option 1. Default (uses the Visual Studio Code app Id)**
+
+1. Complete the [Prerequisites](#prerequisites) above.
 1. Click [Install Microsoft MCP Server for Enterprise](https://vscode.dev/redirect/mcp/install?name=Microsoft%20MCP%20Server%20for%20Enterprise&config=%7b%22name%22:%22Microsoft%20MCP%20Server%20for%20Enterprise%22%2c%22type%22:%22http%22%2c%22url%22:%22https://mcp.svc.cloud.microsoft/enterprise%22%7d) to launch the MCP install page.
 1. Click the Install button in VS Code and sign in with your account from the tenant above.
 1. If Visual Studio Code displays the error `Error getting token from server metadata: Error: Cannot force new registration for a non-dynamic authentication provider.`, change `"microsoft-authentication.implementation"` from `"msal"` to `"msal-no-broker"` in your Settings:
 ![alt text](assets/msal_no_broker.png)
+
+**Option 2. Custom MCP Client app Id**
+
+1. Register a custom MCP Client app and grant the required `MCP.*` scopes. Set `http://localhost` as the redirect URI under **Mobile and desktop applications**. VS Code can use a dynamic port, which Entra ignores when matching localhost redirect URIs.
+1. Add the server to your VS Code `mcp.json`, replacing the client ID:
+
+   ```json
+   {
+     "servers": {
+       "mcp-enterprise": {
+         "type": "http",
+         "url": "https://mcp.svc.cloud.microsoft/enterprise",
+         "oauth": {
+           "clientId": "<REGISTERED_APP_CLIENT_ID>"
+         }
+       }
+     }
+   }
+   ```
+
+1. Start the server and sign in with an account from the provisioned tenant.
 
 </details>
 
@@ -171,7 +229,7 @@ GitHub Copilot CLI can connect using either the default Visual Studio Code MCP C
 **Option 2. Custom MCP Client app Id**
 
 1. Register your own MCP Client application in your tenant and grant it the required `MCP.*` scopes (see [Authorization and permissions](#authorization-and-permissions)).
-1. Set `http://127.0.0.1:51001` as Redirect URI for "Mobile and desktop applications"
+1. Set `http://127.0.0.1:51001` as Redirect URI for "Mobile and desktop applications".
 1. Specify your app Id via `oauthClientId` and `oauthPublicClient` to `true` in `~/.copilot/mcp-config.json`:
 
    ```json
@@ -193,14 +251,19 @@ For more information, see the [GitHub Copilot CLI documentation](https://docs.gi
 
 ## Authorization and permissions
 
-The MCP Server for Enterprise uses Microsoft Graph API to access data in your Microsoft Entra tenant using **delegated permissions** only, and provides a reduced set of permissions exposed by Microsoft Graph.  
+The MCP Server for Enterprise supports **delegated permissions only**. Access requires both the MCP Client's granted scopes and the signed-in user's permissions and roles. MCP consent doesn't grant access beyond that user's authorization.
+
+Grant only the `MCP.*` scopes your use cases need. You can use a read-only configuration without granting write scopes. Add scopes as your needs change; consult the [Microsoft Graph permissions reference](https://learn.microsoft.com/graph/permissions-reference) for the corresponding Graph permissions.
+
+Administrators can use per-user consent grants to limit access to selected users.
+
 Use the following cmdlet to list the permissions provided by the MCP Server for Enterprise:
 
 ```powershell
 (Get-EntraBetaServicePrincipal -Property "PublishedPermissionScopes" -Filter "AppId eq 'e8c77dc2-69b3-43f4-bc51-3213c9d915b4'").PublishedPermissionScopes | Where-Object { $_.IsEnabled -eq $true -and $_.AdditionalProperties["isPrivate"] -ne $true } | Select-Object Value, AdminConsentDisplayName | Sort-Object
 ```
 
-If you'd like to use your own Registered Application, use the following cmdlets to to manage scopes granted to your MCP Client Application:
+You can use your own app registration as the MCP Client. Use these cmdlets to manage its granted scopes:
 
 ```powershell
 Grant-EntraBetaMCPServerPermission -ApplicationId "<MCP_Client_Application_Id>" -Scopes "<Scope1>", "<Scope2>", "<...>"
@@ -233,7 +296,7 @@ Please share suggestions or issues through our feedback form: [Submit feedback](
 
 ## Logs
 
-To monitor usage, enable [Microsoft Graph activity logs](../microsoft-graph-activity-logs-overview.md) in your tenant. The system logs all API calls made through the MCP server.
+To monitor usage, enable [Microsoft Graph activity logs](https://learn.microsoft.com/graph/microsoft-graph-activity-logs-overview) in your tenant to record the Graph API calls made through the MCP server.
 
 **Filter for MCP Server usage:**
 
@@ -245,8 +308,10 @@ The following Kusto query retrieves these logs:
 MicrosoftGraphActivityLogs
 | where TimeGenerated >= ago(30d)
 | where AppId == "e8c77dc2-69b3-43f4-bc51-3213c9d915b4"
-| project RequestId, TimeGenerated, UserId, RequestMethod, RequestUri, ResponseStatusCode
+| project RequestId, ClientRequestId, TimeGenerated, UserId, RequestMethod, RequestUri, Scopes, ResponseStatusCode
 ```
+
+Use Graph's `RequestId` and `ClientRequestId` with the timestamp, user, and request URI to trace API calls. `Scopes` lists permissions in the Graph access token, not the specific permission used to authorize each operation.
 
 ## Support and reference
 
@@ -255,6 +320,7 @@ For documentation, troubleshooting, and feedback, refer to the official [Microso
 ## Security and compliance
 
 All operations respect Microsoft Graph permissions and security policies.
+The MCP server uses standard Microsoft Graph telemetry and doesn't log request payloads. Review your AI client's data-handling and retention policies for prompts and returned data.
 Ensure compliance with your organizational, regulatory, and contractual requirements when integrating the MCP Server.
 
 ## No warranty/limitation of liability
