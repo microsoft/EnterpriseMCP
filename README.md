@@ -83,6 +83,7 @@ Clients don't need to request the other Graph permissions you consented to on th
 
 Microsoft MCP Server for IT Admins works with any MCP client that supports OAuth with a pre-registered client ID.
 **Write actions** also require a client that supports elicitation on the latest MCP protocol version, [2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28), which is stateless. In clients without that support, read tools work but write actions are denied. As clients adopt the latest MCP standard, write actions are enabled automatically, with no change on your side.
+Even a supported client can fall back to an earlier protocol version when it connects. Write actions are then denied for that connection; see [Troubleshooting](#troubleshooting).
 
 Add each redirect URI under **Mobile and desktop applications** in your app registration.
 
@@ -269,6 +270,7 @@ When a user lacks access, the agent can call `request_access` to start the acces
 | Invalid scope error                                                     | The client still uses the old configuration (`api://e8c77dc2-69b3-43f4-bc51-3213c9d915b4/.default` or `MCP.*` scopes). Remove the server, add it again with the `/admin` URL, and sign in again.         |
 | Microsoft Graph returns `403 Forbidden`                                 | The app lacks the Graph permission, or the user lacks the role. Add the permission and grant consent, activate the role in PIM, or let the agent call `request_access`.                                    |
 | Write action denied, or no confirmation prompt                          | The client doesn't support elicitation on MCP protocol version 2026-07-28. Use a client that supports write actions in the [Supported clients](#supported-clients) table.                                 |
+| Write action denied in a client that supports write actions             | The client fell back to an earlier MCP protocol version when it connected, so elicitation isn't available. Check the client's MCP logs for the negotiated protocol version, update the client to its latest version, and restart the server connection. |
 
 ## Advantages
 
